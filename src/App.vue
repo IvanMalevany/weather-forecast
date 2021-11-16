@@ -142,25 +142,26 @@ export default {
   },
   methods: {
       initSearch(){
-          let query = this.search.trim();
+          const vm = this;
+          let query = vm.search.trim();
           if(query.length >= 3){
               let locale = $vuetify.userPreset.i18n.locale;
-              axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(query)}&appid=${this.API_token}&lang=${locale}&units=metric`)
+              axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(query)}&appid=${vm.API_token}&lang=${locale}&units=metric`)
                   .then(({data}) => {
-                      this.current = data;
-                      if(!this.history.find(city => city.result.id === data.id)){
-                          this.addToHistory({
+                      vm.current = data;
+                      if(!vm.history.find(city => city.result.id === data.id)){
+                          vm.addToHistory({
                               query: query,
                               result: data
                           })
                       }
                   })
                   .catch(error => {
-                      this.API_error = true;
+                      vm.API_error = true;
                       console.log(error);
                   })
           }
-          else this.notFillError = true;
+          else vm.notFillError = true;
       },
       addToHistory(data){
           this.history.push(data)
@@ -170,9 +171,9 @@ export default {
           $vuetify.userPreset.i18n.locale = newLang
           localStorage.setItem('lang', newLang)
       },
-      setFromHistory(data){
-          this.search = data.query;
-          this.current = data.result;
+      setFromHistory({query, result}){
+          this.search = query;
+          this.current = result;
       }
   }
 }
